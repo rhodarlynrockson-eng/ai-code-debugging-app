@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT Code Analyzer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+        textarea, button {
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Code Analyzer</h1>
+        <textarea id="code-input" placeholder="Enter your code snippet here..." rows="8"></textarea>
+        <button onclick="submitCode()">Analyze Code</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function submitCode() {
+            const code = document.getElementById("code-input").value;
+            const resultDiv = document.getElementById("result");
+
+            resultDiv.innerHTML = "Processing...";
+            try {
+                const response = await fetch("/analyze", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ code }),
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    resultDiv.innerHTML = `<strong>Explanation:</strong><br>${data.explanation}`;
+                } else {
+                    resultDiv.innerHTML = `<strong>Error:</strong> ${data.error}`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<strong>Error:</strong> ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
